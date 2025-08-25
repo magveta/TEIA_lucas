@@ -1,0 +1,187 @@
+/*-------------------------------------HEADER E CABEÇALHO-------------------------------------------*/
+/* Definições básicas */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fundo com gradiente azul e vermelho */
+body {
+    background: linear-gradient(to bottom right, #171717, #00122d, #230286, #00122d,#171717);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilização do cabeçalho */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    transform: translateY(0);  /* Inicialmente, sem efeito de elevação */
+    transition: transform 0.3s ease;  /* Transição suave */
+}
+
+/* Efeito de elevação no header */
+header:hover {
+    transform: translateY(-5px);  /* Eleva o header ao passar o mouse */
+}
+
+header .logo {
+    transform: translateY(0);  /* Sem elevação inicialmente */
+    transition: transform 0.3s ease;  /* Transição suave */
+}
+
+/* Efeito de elevação no hover da logo */
+header .logo:hover {
+    transform: translateY(-6px);  /* Elevação quando o mouse passa sobre a logo */
+}
+
+header .logo img {
+    width: 120px;
+    height: auto;
+    margin-right: 10px;
+    transform: translateY(0);  /* Sem elevação inicialmente */
+    transition: transform 0.3s ease;  /* Transição suave */
+}
+
+/* Efeito de elevação mais intenso na imagem da logo */
+header .logo img:hover {
+    transform: translateY(-6px);  /* Elevação quando o mouse passa sobre a imagem */
+}
+
+header .brand-name {
+    font-family: 'Orbitron', sans-serif;  /* Fonte mais arredondada */
+    font-size: 28px;  /* Tamanho da fonte */
+    font-weight: 600;  /* Peso mais forte */
+    color: #ffffff;
+    letter-spacing: 2px;  /* Espaçamento entre as letras */
+    text-transform: uppercase;  /* Letras maiúsculas */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);  /* Sombra suave no texto */
+    transition: color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;  /* Remove qualquer sublinhado */
+    margin-right: auto;
+}
+
+/* Efeito de elevação no nome da marca */
+header .brand-name:hover {
+    color: #adadad;  /* Cor de destaque */
+    transform: translateY(-6px);  /* Elevação quando o mouse passa sobre o nome da marca */
+}
+
+/* Estilização da navegação */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin-left: 20px; /* Adicionando espaçamento à esquerda dos itens */
+}
+
+/* Cada link de navegação vai ter um efeito de elevação individual */
+nav ul li {
+    transition: transform 0.7s ease;  /* Transição suave para o efeito de movimento */
+}
+
+/* Efeito de elevação individual nos links */
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    transition: color 0.7s ease, transform 0.3s ease;  /* Transição suave para a cor e o movimento */
+    transform: translateY(0);  /* Sem elevação inicialmente */
+}
+
+/* Efeito de elevação nos links de navegação */
+nav ul li a:hover {
+    color: #adadad;  /* Cor de destaque nos links */
+    transform: translateY(-5px);  /* Elevação ao passar o mouse */
+}
+
+/* Efeito de rotação para ícones dentro dos links */
+nav ul li a i {
+    transition: transform 0.7s ease;  /* Transição suave nos ícones */
+}
+
+/* Efeito de rotação no hover do ícone */
+nav ul li a i:hover {
+    transform: rotate(15deg);  /* Efeito de rotação no ícone */
+}
+
+/*-------------------------------------CORPO DA PÁGINA-------------------------------------------*/
+
+/* Estilo para a área principal */
+main {
+    text-align: left;
+    padding: 50px 20px;
+}
+
+.welcome-message h1 {
+    font-family: 'Orbitron', sans-serif;  /* Fonte mais arredondada */
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.welcome-message p {
+    font-family: 'Orbitron', sans-serif;  /* Fonte mais arredondada */
+    font-size: 22px;
+    margin-bottom: 30px;
+    color: #A9CDF9
+}
+
+/* Botão de chamada para ação */
+.cta-button {
+    font-family: 'Comic-Sans', sans-serif;  /* Fonte mais arredondada */
+    background-color: #5454D4;
+    color: white;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #4040a5;
+}
+/*-------------------------------------CORPO DA PÁGINA-------------------------------------------*/
+
+.info-container {
+    display: flex; /* Alinha os elementos lado a lado */
+    justify-content: space-between; /* Garante que o conteúdo e a imagem fiquem afastados */
+    align-items: center; /* Alinha verticalmente os elementos no centro */
+    padding: 20px;
+    max-width: 1000px;
+    margin: 50px auto;
+}
+
+.info-box {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1; /* Faz com que a caixa de texto ocupe o restante do espaço */
+    max-width: 60%; /* Define o tamanho máximo para o texto */
+}
+
+h2 {
+    margin: 10px 0;
+}
+
+.image-container img {
+    max-width: 300px; /* Limita o tamanho da imagem */
+    width: 100%; /* Faz a imagem responsiva */
+    border-radius: 10px; /* Adiciona borda arredondada na imagem */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra na imagem */
+}
