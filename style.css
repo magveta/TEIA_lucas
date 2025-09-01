@@ -484,3 +484,135 @@ footer {
     font-size: 1.8rem;
   }
 }
+
+/*SOBRE NOS GRID*/
+
+.sobre-container {
+  padding: 3rem 8%;
+  text-align: center;
+}
+
+.sobre-intro h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.sobre-intro p {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+.sobre-missao {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.sobre-equipe .equipe-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.equipe-card {
+  background: #202020;
+  padding: 1.5rem;
+  border-radius: 15px;
+  width: 180px;
+  text-align: center;
+}
+
+.equipe-card img {
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.equipe-card {
+  background: #202020;
+  padding: 1rem;
+  border-radius: 15px;
+  width: 200px;          /* Largura fixa do card */
+  text-align: center;
+  overflow: hidden;      /* Impede que a imagem saia do card */
+}
+
+.equipe-card img {
+  width: 120px;          /* Ajuste conforme preferir */
+  height: 120px;         /* Mantém proporção quadrada */
+  object-fit: cover;     /* Faz a imagem preencher sem distorcer */
+  border-radius: 50%;    /* Deixa a imagem redonda */
+  margin-bottom: 0.5rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #0d0d2b, #1a1a40, #2b2b70);
+  color: #fff;
+}
+
+.equipe-section {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.equipe-section h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Grid responsivo */
+.equipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Card fixo */
+.equipe-card {
+  background: #202020;
+  border-radius: 15px;
+  width: 180px;
+  height: 250px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.equipe-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Imagem ajustada */
+.equipe-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* Nome e cargo */
+.equipe-card .nome {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.equipe-card .cargo {
+  font-size: 14px;
+  color: #ccc;
+}
