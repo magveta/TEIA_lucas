@@ -553,13 +553,6 @@ footer {
   margin-right: auto;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #0d0d2b, #1a1a40, #2b2b70);
-  color: #fff;
-}
-
 .equipe-section {
   text-align: center;
   padding: 40px 20px;
