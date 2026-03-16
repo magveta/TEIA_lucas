@@ -27,6 +27,8 @@ public class CandidatoMapper {
         dto.setNome(candidato.getNome());
         dto.setCpf(candidato.getCpf());
         dto.setEmail(candidato.getEmail());
+        dto.setCurriculoNomeArquivo(candidato.getCurriculoNomeArquivo());
+        dto.setPossuiCurriculo(candidato.getCurriculoArquivo() != null && candidato.getCurriculoArquivo().length > 0);
         // Não inclui senha por segurança
         
         return dto;

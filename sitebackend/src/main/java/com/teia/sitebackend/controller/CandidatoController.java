@@ -5,13 +5,19 @@ import com.teia.sitebackend.dto.CandidatoCadastroRequest;
 import com.teia.sitebackend.dto.CandidatoDTO;
 import com.teia.sitebackend.dto.LoginRequest;
 import com.teia.sitebackend.factory.ResponseFactory;
+import com.teia.sitebackend.exception.ResourceNotFoundException;
+import com.teia.sitebackend.exception.ValidationException;
 import com.teia.sitebackend.mapper.CandidatoMapper;
 import com.teia.sitebackend.model.Candidato;
 import com.teia.sitebackend.service.ICandidatoService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,5 +75,67 @@ public class CandidatoController {
         CandidatoDTO candidatoDTO = candidatoMapper.toDTO(candidato.get());
         
         return ResponseFactory.success("Login realizado com sucesso!", candidatoDTO);
+    }
+
+    /**
+     * Upload de currículo do candidato
+     */
+    @PostMapping(value = "/{candidatoId}/curriculo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> uploadCurriculo(
+        @PathVariable String candidatoId,
+        @RequestPart("file") MultipartFile file
+    ) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new ValidationException("Selecione um arquivo de currículo para envio");
+        }
+
+        final long tamanhoMaximo = 5 * 1024 * 1024;
+        if (file.getSize() > tamanhoMaximo) {
+            throw new ValidationException("O currículo deve ter no máximo 5MB");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || (!contentType.equals("application/pdf")
+            && !contentType.equals("application/msword")
+            && !contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))) {
+            throw new ValidationException("Formato inválido. Envie arquivo PDF, DOC ou DOCX");
+        }
+
+        Candidato candidatoAtualizado = candidatoService.atualizarCurriculo(
+            candidatoId,
+            file.getOriginalFilename(),
+            contentType,
+            file.getBytes()
+        );
+
+        CandidatoDTO candidatoDTO = candidatoMapper.toDTO(candidatoAtualizado);
+        return ResponseFactory.success("Currículo enviado com sucesso", candidatoDTO);
+    }
+
+    /**
+     * Download do currículo do candidato
+     */
+    @GetMapping("/{candidatoId}/curriculo")
+    public ResponseEntity<byte[]> baixarCurriculo(@PathVariable String candidatoId) {
+        Candidato candidato = candidatoService.getById(candidatoId)
+            .orElseThrow(() -> new ResourceNotFoundException("Candidato não encontrado"));
+
+        byte[] arquivo = candidato.getCurriculoArquivo();
+        if (arquivo == null || arquivo.length == 0) {
+            throw new ResourceNotFoundException("Currículo não encontrado para este candidato");
+        }
+
+        String nomeArquivo = candidato.getCurriculoNomeArquivo() != null
+            ? candidato.getCurriculoNomeArquivo()
+            : "curriculo.pdf";
+
+        String contentType = candidato.getCurriculoContentType() != null
+            ? candidato.getCurriculoContentType()
+            : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
+            .body(arquivo);
     }
 }

@@ -8,6 +8,8 @@ public class CandidatoDTO {
     private String nome;
     private String cpf;
     private String email;
+    private String curriculoNomeArquivo;
+    private boolean possuiCurriculo;
 
     public CandidatoDTO() {
     }
@@ -49,5 +51,21 @@ public class CandidatoDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCurriculoNomeArquivo() {
+        return curriculoNomeArquivo;
+    }
+
+    public void setCurriculoNomeArquivo(String curriculoNomeArquivo) {
+        this.curriculoNomeArquivo = curriculoNomeArquivo;
+    }
+
+    public boolean isPossuiCurriculo() {
+        return possuiCurriculo;
+    }
+
+    public void setPossuiCurriculo(boolean possuiCurriculo) {
+        this.possuiCurriculo = possuiCurriculo;
     }
 }

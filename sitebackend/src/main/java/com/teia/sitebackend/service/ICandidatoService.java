@@ -19,7 +19,7 @@ public interface ICandidatoService {
     /**
      * Busca candidato por ID
      */
-    Optional<Candidato> getById(Integer id);
+    Optional<Candidato> getById(String id);
     
     /**
      * Salva um novo candidato ou atualiza existente
@@ -29,7 +29,12 @@ public interface ICandidatoService {
     /**
      * Remove candidato por ID
      */
-    void delete(Integer id);
+    void delete(String id);
+
+    /**
+     * Atualiza o currículo do candidato
+     */
+    Candidato atualizarCurriculo(String candidatoId, String nomeArquivo, String contentType, byte[] arquivo);
     
     /**
      * Busca candidato por email

@@ -1,7 +1,78 @@
+import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { candidatoAPI } from "../../services/api";
 
 export const AreaAlunoPage = () => {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
+  const [curriculoFile, setCurriculoFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" });
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    setMessage({ text: "", type: "" });
+
+    if (!file) {
+      setCurriculoFile(null);
+      return;
+    }
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setMessage({ text: "Formato inválido. Envie PDF, DOC ou DOCX.", type: "error" });
+      setCurriculoFile(null);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ text: "O arquivo deve ter no máximo 5MB.", type: "error" });
+      setCurriculoFile(null);
+      return;
+    }
+
+    setCurriculoFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!user?.candidato_id) {
+      setMessage({ text: "Usuário não identificado para upload.", type: "error" });
+      return;
+    }
+
+    if (!curriculoFile) {
+      setMessage({ text: "Selecione um arquivo antes de enviar.", type: "error" });
+      return;
+    }
+
+    setUploading(true);
+    setMessage({ text: "", type: "" });
+
+    try {
+      const response = await candidatoAPI.uploadCurriculo(user.candidato_id, curriculoFile);
+
+      if (response.success && response.data?.success) {
+        if (response.data?.data) {
+          login(response.data.data);
+        }
+        setMessage({ text: "Currículo enviado com sucesso!", type: "success" });
+        setCurriculoFile(null);
+      } else {
+        setMessage({
+          text: response.data?.message || "Não foi possível enviar o currículo.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      setMessage({ text: error.message || "Erro ao enviar currículo.", type: "error" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <main className="aluno-container">
@@ -24,8 +95,14 @@ export const AreaAlunoPage = () => {
 
         <div className="upload-cv">
           <label className="cv-label">Enviar Currículo</label>
-          <input type="file" disabled />
-          <p className="cv-info">*Em breve disponível</p>
+          <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx" disabled={uploading} />
+          <button type="button" onClick={handleUpload} disabled={uploading || !curriculoFile}>
+            {uploading ? "Enviando..." : "Enviar currículo"}
+          </button>
+          {user?.possuiCurriculo && user?.curriculoNomeArquivo && (
+            <p className="cv-info">Currículo atual: {user.curriculoNomeArquivo}</p>
+          )}
+          {message.text && <p className={`cv-info ${message.type}`}>{message.text}</p>}
         </div>
       </section>
 

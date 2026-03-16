@@ -32,6 +32,12 @@ public class Candidato {
     @Size(min = 6, max = 50, message = "Senha deve ter entre 6 e 50 caracteres")
     private String senha;
 
+    private String curriculoNomeArquivo;
+
+    private String curriculoContentType;
+
+    private byte[] curriculoArquivo;
+
     public Candidato() {
     }
 
@@ -81,5 +87,29 @@ public class Candidato {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getCurriculoNomeArquivo() {
+        return curriculoNomeArquivo;
+    }
+
+    public void setCurriculoNomeArquivo(String curriculoNomeArquivo) {
+        this.curriculoNomeArquivo = curriculoNomeArquivo;
+    }
+
+    public String getCurriculoContentType() {
+        return curriculoContentType;
+    }
+
+    public void setCurriculoContentType(String curriculoContentType) {
+        this.curriculoContentType = curriculoContentType;
+    }
+
+    public byte[] getCurriculoArquivo() {
+        return curriculoArquivo;
+    }
+
+    public void setCurriculoArquivo(byte[] curriculoArquivo) {
+        this.curriculoArquivo = curriculoArquivo;
     }
 }

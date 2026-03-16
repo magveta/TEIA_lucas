@@ -24,8 +24,8 @@ public class CandidatoService implements ICandidatoService {
     }
     
     @Override
-    public Optional<Candidato> getById(Integer id){
-        return candidatoRepository.findById(String.valueOf(id));
+    public Optional<Candidato> getById(String id){
+        return candidatoRepository.findById(id);
     }
     
     @Override
@@ -44,11 +44,23 @@ public class CandidatoService implements ICandidatoService {
     }
     
     @Override
-    public void delete(Integer id){
-        if (!candidatoRepository.existsById(String.valueOf(id))) {
+    public void delete(String id){
+        if (!candidatoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Candidato não encontrado");
         }
-        candidatoRepository.deleteById(String.valueOf(id));
+        candidatoRepository.deleteById(id);
+    }
+
+    @Override
+    public Candidato atualizarCurriculo(String candidatoId, String nomeArquivo, String contentType, byte[] arquivo) {
+        Candidato candidato = candidatoRepository.findById(candidatoId)
+            .orElseThrow(() -> new ResourceNotFoundException("Candidato não encontrado"));
+
+        candidato.setCurriculoNomeArquivo(nomeArquivo);
+        candidato.setCurriculoContentType(contentType);
+        candidato.setCurriculoArquivo(arquivo);
+
+        return candidatoRepository.save(candidato);
     }
     
     @Override

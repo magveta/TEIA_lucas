@@ -72,6 +72,64 @@ export const candidatoAPI = {
       body: JSON.stringify(credentials),
     });
   },
+
+  /**
+   * Upload de currículo do candidato
+   */
+  uploadCurriculo: async (candidatoId, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/candidato/${candidatoId}/curriculo`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      return { success: response.ok, data, status: response.status };
+    } catch (error) {
+      console.error('Erro no upload de currículo:', error);
+      throw new Error('Erro de conexão com o servidor. Verifique se o backend está rodando.');
+    }
+  },
+
+  /**
+   * Baixar currículo do candidato como Blob
+   */
+  baixarCurriculoBlob: async (candidatoId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/candidato/${candidatoId}/curriculo`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData?.message || 'Não foi possível baixar o currículo.');
+        }
+        throw new Error('Não foi possível baixar o currículo.');
+      }
+
+      const blob = await response.blob();
+      const contentType = response.headers.get('content-type') || blob.type;
+      const disposition = response.headers.get('content-disposition') || '';
+
+      let fileName = 'curriculo';
+      const match = disposition.match(/filename="?([^\"]+)"?/i);
+      if (match && match[1]) {
+        fileName = match[1];
+      }
+
+      return { blob, contentType, fileName };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Erro de conexão com o servidor. Verifique se o backend está rodando.');
+    }
+  },
 };
 
 /**
