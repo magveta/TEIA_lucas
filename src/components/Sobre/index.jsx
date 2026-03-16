@@ -1,4 +1,3 @@
-import React from 'react'
 import Ana from '../../assets/Ana.jpeg'
 import bruna from '../../assets/bruna.jpeg'
 import cleverson from '../../assets/cleverson.jpeg'

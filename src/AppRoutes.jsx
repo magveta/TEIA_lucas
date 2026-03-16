@@ -5,7 +5,6 @@ import { CadastroPage } from './pages/Cadastro'
 import { DashboardPage } from './pages/Dashboard'
 import { SobrePage } from './pages/Sobre'
 import { ContatoPage } from './pages/Contato'
-import { AreaAlunoPage } from './pages/AreaAluno'
 import './App.css'
 
 // Componente para proteger rotas que precisam de autenticação
@@ -71,15 +70,6 @@ function AppRoutes() {
             } 
           />
           
-          <Route 
-            path="/area-aluno" 
-            element={
-              <ProtectedRoute>
-                <AreaAlunoPage />
-                   </ProtectedRoute>
-                }
-          />
-
           <Route 
             path="/cadastro" 
             element={
