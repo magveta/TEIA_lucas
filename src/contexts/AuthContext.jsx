@@ -1,7 +1,7 @@
 // contexts/AuthContext.jsx
 // Context para gerenciar autenticação globalmente na aplicação
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../services/api';
 
 const AuthContext = createContext();

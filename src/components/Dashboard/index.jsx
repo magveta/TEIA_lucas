@@ -1,4 +1,3 @@
-import React from 'react'
 import logoBR from '../../assets/logoBR.png'
 import { Link } from 'react-router-dom'
 

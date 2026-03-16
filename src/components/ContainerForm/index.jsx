@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { candidatoAPI } from '../../services/api'
 import { useAuth } from '../../contexts/AuthContext'
@@ -32,7 +32,7 @@ export const ContainerForm = () => {
         
         // Redirecionar para dashboard após 1 segundo
         setTimeout(() => {
-          navigate('/area-aluno');
+          navigate('/dashboard');
         }, 1000);
       } else {
         // Tratar erro retornado pelo backend
