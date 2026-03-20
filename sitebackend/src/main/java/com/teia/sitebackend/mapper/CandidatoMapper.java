@@ -27,6 +27,13 @@ public class CandidatoMapper {
         dto.setNome(candidato.getNome());
         dto.setCpf(candidato.getCpf());
         dto.setEmail(candidato.getEmail());
+        dto.setCep(candidato.getCep());
+        dto.setLogradouro(candidato.getLogradouro());
+        dto.setNumero(candidato.getNumero());
+        dto.setComplemento(candidato.getComplemento());
+        dto.setBairro(candidato.getBairro());
+        dto.setCidade(candidato.getCidade());
+        dto.setEstado(candidato.getEstado());
         dto.setCurriculoNomeArquivo(candidato.getCurriculoNomeArquivo());
         dto.setPossuiCurriculo(candidato.getCurriculoArquivo() != null && candidato.getCurriculoArquivo().length > 0);
         // Não inclui senha por segurança
@@ -60,6 +67,13 @@ public class CandidatoMapper {
         candidato.setCpf(request.getCpf());
         candidato.setEmail(request.getEmail());
         candidato.setSenha(request.getSenha());
+        candidato.setCep(request.getCep());
+        candidato.setLogradouro(request.getLogradouro());
+        candidato.setNumero(request.getNumero());
+        candidato.setComplemento(request.getComplemento());
+        candidato.setBairro(request.getBairro());
+        candidato.setCidade(request.getCidade());
+        candidato.setEstado(request.getEstado());
         
         return candidato;
     }
@@ -83,6 +97,27 @@ public class CandidatoMapper {
         }
         if (request.getSenha() != null) {
             candidato.setSenha(request.getSenha());
+        }
+        if (request.getCep() != null) {
+            candidato.setCep(request.getCep());
+        }
+        if (request.getLogradouro() != null) {
+            candidato.setLogradouro(request.getLogradouro());
+        }
+        if (request.getNumero() != null) {
+            candidato.setNumero(request.getNumero());
+        }
+        if (request.getComplemento() != null) {
+            candidato.setComplemento(request.getComplemento());
+        }
+        if (request.getBairro() != null) {
+            candidato.setBairro(request.getBairro());
+        }
+        if (request.getCidade() != null) {
+            candidato.setCidade(request.getCidade());
+        }
+        if (request.getEstado() != null) {
+            candidato.setEstado(request.getEstado());
         }
     }
 }

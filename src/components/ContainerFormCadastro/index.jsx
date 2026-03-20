@@ -7,7 +7,14 @@ export const ContainerFormCadastro = () => {
     nome: '',
     cpf: '',
     email: '',
-    senha: ''
+    senha: '',
+    cep: '',
+    logradouro: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -34,11 +41,20 @@ export const ContainerFormCadastro = () => {
     return senhaRegex.test(senha);
   };
 
+  const validarCEP = (cep) => /^\d{8}$/.test(cep);
+
+  const validarEstado = (estado) => /^[A-Za-z]{2}$/.test(estado);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Remover não-números do CPF
-    const finalValue = name === 'cpf' ? value.replace(/\D/g, '') : value;
+    let finalValue = value;
+    if (name === 'cpf' || name === 'cep') {
+      finalValue = value.replace(/\D/g, '');
+    }
+    if (name === 'estado') {
+      finalValue = value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2);
+    }
     
     setFormData(prev => ({
       ...prev,
@@ -71,6 +87,22 @@ export const ContainerFormCadastro = () => {
         delete newErrors.senha;
       }
     }
+
+    if (name === 'cep' && finalValue.length > 0) {
+      if (!validarCEP(finalValue)) {
+        newErrors.cep = 'CEP deve conter exatamente 8 números';
+      } else {
+        delete newErrors.cep;
+      }
+    }
+
+    if (name === 'estado' && finalValue.length > 0) {
+      if (!validarEstado(finalValue)) {
+        newErrors.estado = 'Informe a UF com 2 letras (ex.: SP)';
+      } else {
+        delete newErrors.estado;
+      }
+    }
     
     setErrors(newErrors);
   };
@@ -81,6 +113,12 @@ export const ContainerFormCadastro = () => {
       validarCPF(formData.cpf) &&
       validarEmail(formData.email) &&
       validarSenha(formData.senha) &&
+      validarCEP(formData.cep) &&
+      formData.logradouro.trim().length > 0 &&
+      formData.numero.trim().length > 0 &&
+      formData.bairro.trim().length > 0 &&
+      formData.cidade.trim().length > 0 &&
+      validarEstado(formData.estado) &&
       Object.keys(errors).length === 0
     );
   };
@@ -108,7 +146,14 @@ export const ContainerFormCadastro = () => {
           nome: '',
           cpf: '',
           email: '',
-          senha: ''
+          senha: '',
+          cep: '',
+          logradouro: '',
+          numero: '',
+          complemento: '',
+          bairro: '',
+          cidade: '',
+          estado: ''
         });
         setErrors({});
         
@@ -195,6 +240,102 @@ export const ContainerFormCadastro = () => {
                   required
                 />
                 {errors.senha && <span className="error-message">{errors.senha}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="cep">CEP:</label>
+                <input
+                  type="text"
+                  id="cep"
+                  name="cep"
+                  value={formData.cep}
+                  onChange={handleChange}
+                  maxLength="8"
+                  placeholder="Apenas números"
+                  disabled={loading}
+                  required
+                />
+                {errors.cep && <span className="error-message">{errors.cep}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="logradouro">Logradouro:</label>
+                <input
+                  type="text"
+                  id="logradouro"
+                  name="logradouro"
+                  value={formData.logradouro}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="numero">Número:</label>
+                <input
+                  type="text"
+                  id="numero"
+                  name="numero"
+                  value={formData.numero}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="complemento">Complemento:</label>
+                <input
+                  type="text"
+                  id="complemento"
+                  name="complemento"
+                  value={formData.complemento}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="bairro">Bairro:</label>
+                <input
+                  type="text"
+                  id="bairro"
+                  name="bairro"
+                  value={formData.bairro}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="cidade">Cidade:</label>
+                <input
+                  type="text"
+                  id="cidade"
+                  name="cidade"
+                  value={formData.cidade}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="estado">Estado (UF):</label>
+                <input
+                  type="text"
+                  id="estado"
+                  name="estado"
+                  value={formData.estado}
+                  onChange={handleChange}
+                  maxLength="2"
+                  placeholder="Ex.: SP"
+                  disabled={loading}
+                  required
+                />
+                {errors.estado && <span className="error-message">{errors.estado}</span>}
               </div>
               
               {message.text && (
