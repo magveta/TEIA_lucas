@@ -2,7 +2,7 @@
 
 Este é o backend da aplicação **Teia**, desenvolvido em Spring Boot para gerenciar candidatos e sistema de login.
 
-## 🚀 Como executar o projeto
+## Como executar o projeto
 
 ### Pré-requisitos
 - **Java 17** ou superior
@@ -26,7 +26,7 @@ O servidor iniciará na **porta 8080**: `http://localhost:8080`
 Acesse: `http://localhost:8080/candidato`
 - Deve retornar uma lista vazia `[]` (inicialmente)
 
-## 🗄️ Banco de Dados MongoDB
+## Banco de Dados MongoDB
 
 ### Pré-requisitos
 - **MongoDB Community Server** instalado e rodando
@@ -65,7 +65,7 @@ db.candidatos.countDocuments()
 db.candidatos.find({ email: "exemplo@email.com" })
 ```
 
-## 📡 Endpoints da API
+## Endpoints da API
 
 ### Candidatos
 - **GET** `/candidato` - Listar todos os candidatos
@@ -96,14 +96,14 @@ curl -X POST http://localhost:8080/candidato/login \
   }'
 ```
 
-## 🎯 Frontend Integration
+## Frontend Integration
 
 O frontend deve fazer requisições para:
 - **Cadastro**: `http://localhost:8080/candidato`
 - **Login**: `http://localhost:8080/candidato/login`
 
 **CORS** está configurado para aceitar requisições de:
-- `localhost:5173` (Vite - padrão) ⚡
+- `localhost:5173` (Vite - padrão)
 - `localhost:5174` (Vite - alternativa)
 - `localhost:3000` (React/Next.js)
 - `localhost:5000`, `localhost:5500`, `localhost:8000`
@@ -116,7 +116,7 @@ O frontend React usa Vite e roda por padrão em `http://localhost:5173`:
 npm run dev
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 src/main/java/com/teia/sitebackend/
@@ -136,7 +136,7 @@ src/main/java/com/teia/sitebackend/
 └── SitebackendApplication.java     # Classe principal
 ```
 
-## 🔧 Configurações (application.properties)
+## Configurações (application.properties)
 
 ```properties
 # Porta do servidor
@@ -151,7 +151,7 @@ spring.data.mongodb.database=teia_db
 logging.level.org.springframework.data.mongodb=DEBUG
 ```
 
-## 🐛 Solução de Problemas
+## Solução de Problemas
 
 ### Erro de porta em uso
 Se a porta 8080 estiver ocupada:
@@ -172,7 +172,7 @@ java -version
 ### CORS bloqueado
 Verificar se o frontend está rodando em uma das portas configuradas no `CorsConfig.java`.
 
-## 📝 Notas Importantes
+## Notas Importantes
 
 - **MongoDB**: Dados persistem entre reinicializações do servidor
 - **Índices**: Email e CPF têm índices únicos para prevenir duplicatas
@@ -181,7 +181,7 @@ Verificar se o frontend está rodando em uma das portas configuradas no `CorsCon
 - **Logs**: Acompanhe o console para debug durante desenvolvimento
 - **ID**: MongoDB gera IDs automaticamente (ObjectId como String)
 
-## 🤝 Para desenvolvedores
+## Para desenvolvedores
 
 ### Adicionando novos endpoints
 1. Criar método no `CandidatoController.java`
