@@ -203,9 +203,110 @@ footer {
   border: 2px solid rgba(0, 0, 255, 0.226);
 }
 
-/* Ajuste para formulário de cadastro ser um pouco maior */
+/* Ajuste para formulário de cadastro ser maior e comportar 2 colunas */
 .cadastro-form-section {
-  max-width: 500px;
+  max-width: 900px;
+}
+
+/* Grid de 2 colunas para os frames do cadastro */
+.cadastro-frames-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Cada frame/card do cadastro */
+.cadastro-frame {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(100, 130, 255, 0.18);
+  border-radius: 16px;
+  padding: 1.8rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cadastro-frame:hover {
+  border-color: rgba(100, 130, 255, 0.35);
+  box-shadow: 0 0 20px rgba(60, 90, 220, 0.1);
+}
+
+.cadastro-frame-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #8ea8ff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(100, 130, 255, 0.15);
+}
+
+/* Sub-grid para campos inline (CEP+Número, Cidade+UF) */
+.form-row {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-row.two-cols {
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-row.col-auto-small {
+  grid-template-columns: 1fr auto;
+}
+
+/* Campo pequeno (UF, Número) */
+.form-group.field-small {
+  max-width: 110px;
+}
+
+.form-group.field-small input {
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* ViaCEP - Input com loader */
+.input-with-loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-loader input {
+  width: 100%;
+}
+
+.cep-spinner {
+  position: absolute;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(100, 130, 255, 0.25);
+  border-top-color: #8ea8ff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.success-message {
+  color: #4ade80;
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+  display: block;
+  line-height: 1.3;
+}
+
+/* Campos preenchidos automaticamente pelo ViaCEP */
+.form-group input.field-autofilled {
+  background: rgba(100, 130, 255, 0.08);
+  border-color: rgba(100, 130, 255, 0.3);
+  color: #c0ccff;
+  cursor: default;
 }
 
 .login-form-container h2 {
@@ -261,7 +362,7 @@ footer {
   color: #ff4444;
   font-size: 0.85rem;
   margin-top: 0.3rem;
-  display: none;
+  display: block;
   line-height: 1.3;
 }
 
@@ -402,7 +503,11 @@ footer {
 
   .cadastro-form-section {
     max-width: 100%;
-    padding: 2rem;
+    padding: 1.5rem;
+  }
+
+  .cadastro-frames-grid {
+    grid-template-columns: 1fr;
   }
 
   .login-form-container h2 {

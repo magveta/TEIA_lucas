@@ -7,10 +7,19 @@ export const ContainerFormCadastro = () => {
     nome: '',
     cpf: '',
     email: '',
-    senha: ''
+    senha: '',
+    cep: '',
+    logradouro: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepPreenchido, setCepPreenchido] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
@@ -34,11 +43,59 @@ export const ContainerFormCadastro = () => {
     return senhaRegex.test(senha);
   };
 
+  const validarCEP = (cep) => /^\d{8}$/.test(cep);
+
+  const validarEstado = (estado) => /^[A-Za-z]{2}$/.test(estado);
+
+  // Busca endereço via ViaCEP
+  const buscarCEP = async (cep) => {
+    if (!validarCEP(cep)) return;
+
+    setCepLoading(true);
+    const newErrors = { ...errors };
+    delete newErrors.cep;
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        newErrors.cep = 'CEP não encontrado';
+        setErrors(newErrors);
+        setCepPreenchido(false);
+        return;
+      }
+
+      // Preenche os campos com os dados do ViaCEP
+      setFormData(prev => ({
+        ...prev,
+        logradouro: data.logradouro || '',
+        bairro: data.bairro || '',
+        cidade: data.localidade || '',
+        estado: data.uf || ''
+      }));
+
+      setCepPreenchido(true);
+      setErrors(newErrors);
+    } catch {
+      newErrors.cep = 'Erro ao buscar CEP. Tente novamente.';
+      setErrors(newErrors);
+      setCepPreenchido(false);
+    } finally {
+      setCepLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Remover não-números do CPF
-    const finalValue = name === 'cpf' ? value.replace(/\D/g, '') : value;
+    let finalValue = value;
+    if (name === 'cpf' || name === 'cep') {
+      finalValue = value.replace(/\D/g, '');
+    }
+    if (name === 'estado') {
+      finalValue = value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2);
+    }
     
     setFormData(prev => ({
       ...prev,
@@ -71,6 +128,30 @@ export const ContainerFormCadastro = () => {
         delete newErrors.senha;
       }
     }
+
+    if (name === 'cep' && finalValue.length > 0) {
+      if (!validarCEP(finalValue)) {
+        newErrors.cep = 'CEP deve conter exatamente 8 números';
+        setCepPreenchido(false);
+      } else {
+        delete newErrors.cep;
+        // Dispara busca automática ao completar 8 dígitos
+        buscarCEP(finalValue);
+      }
+    }
+
+    // Se apagar o CEP, libera campos para edição manual
+    if (name === 'cep' && finalValue.length === 0) {
+      setCepPreenchido(false);
+    }
+
+    if (name === 'estado' && finalValue.length > 0) {
+      if (!validarEstado(finalValue)) {
+        newErrors.estado = 'Informe a UF com 2 letras (ex.: SP)';
+      } else {
+        delete newErrors.estado;
+      }
+    }
     
     setErrors(newErrors);
   };
@@ -81,6 +162,12 @@ export const ContainerFormCadastro = () => {
       validarCPF(formData.cpf) &&
       validarEmail(formData.email) &&
       validarSenha(formData.senha) &&
+      validarCEP(formData.cep) &&
+      formData.logradouro.trim().length > 0 &&
+      formData.numero.trim().length > 0 &&
+      formData.bairro.trim().length > 0 &&
+      formData.cidade.trim().length > 0 &&
+      validarEstado(formData.estado) &&
       Object.keys(errors).length === 0
     );
   };
@@ -108,7 +195,14 @@ export const ContainerFormCadastro = () => {
           nome: '',
           cpf: '',
           email: '',
-          senha: ''
+          senha: '',
+          cep: '',
+          logradouro: '',
+          numero: '',
+          complemento: '',
+          bairro: '',
+          cidade: '',
+          estado: ''
         });
         setErrors({});
         
@@ -140,61 +234,187 @@ export const ContainerFormCadastro = () => {
           <div className="login-form-container">
             <h2>Crie sua Conta</h2>
             <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="nome">Nome Completo:</label>
-                <input 
-                  type="text" 
-                  id="nome" 
-                  name="nome"
-                  value={formData.nome}
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="cpf">CPF:</label>
-                <input 
-                  type="text" 
-                  id="cpf" 
-                  name="cpf"
-                  value={formData.cpf}
-                  onChange={handleChange}
-                  maxLength="11" 
-                  placeholder="Apenas números"
-                  disabled={loading}
-                  required
-                />
-                {errors.cpf && <span className="error-message">{errors.cpf}</span>}
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                />
-                {errors.email && <span className="error-message">{errors.email}</span>}
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="senha">Senha:</label>
-                <input 
-                  type="password" 
-                  id="senha" 
-                  name="senha"
-                  value={formData.senha}
-                  onChange={handleChange}
-                  disabled={loading}
-                  required
-                />
-                {errors.senha && <span className="error-message">{errors.senha}</span>}
+              <div className="cadastro-frames-grid">
+                <section className="cadastro-frame">
+                  <h3 className="cadastro-frame-title">Informações Básicas</h3>
+
+                  <div className="form-group">
+                    <label htmlFor="nome">Nome Completo:</label>
+                    <input
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      value={formData.nome}
+                      onChange={handleChange}
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="cpf">CPF:</label>
+                    <input
+                      type="text"
+                      id="cpf"
+                      name="cpf"
+                      value={formData.cpf}
+                      onChange={handleChange}
+                      maxLength="11"
+                      placeholder="Apenas números"
+                      disabled={loading}
+                      required
+                    />
+                    {errors.cpf && <span className="error-message">{errors.cpf}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="email">Email:</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      disabled={loading}
+                      required
+                    />
+                    {errors.email && <span className="error-message">{errors.email}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="senha">Senha:</label>
+                    <input
+                      type="password"
+                      id="senha"
+                      name="senha"
+                      value={formData.senha}
+                      onChange={handleChange}
+                      disabled={loading}
+                      required
+                    />
+                    {errors.senha && <span className="error-message">{errors.senha}</span>}
+                  </div>
+                </section>
+
+                <section className="cadastro-frame">
+                  <h3 className="cadastro-frame-title">Endereço</h3>
+
+                  <div className="form-row col-auto-small">
+                    <div className="form-group">
+                      <label htmlFor="cep">CEP:</label>
+                      <div className="input-with-loader">
+                        <input
+                          type="text"
+                          id="cep"
+                          name="cep"
+                          value={formData.cep}
+                          onChange={handleChange}
+                          maxLength="8"
+                          placeholder="Apenas números"
+                          disabled={loading || cepLoading}
+                          required
+                        />
+                        {cepLoading && <span className="cep-spinner" />}
+                      </div>
+                      {errors.cep && <span className="error-message">{errors.cep}</span>}
+                      {cepPreenchido && !errors.cep && (
+                        <span className="success-message">✓ Endereço encontrado</span>
+                      )}
+                    </div>
+
+                    <div className="form-group field-small">
+                      <label htmlFor="numero">Nº:</label>
+                      <input
+                        type="text"
+                        id="numero"
+                        name="numero"
+                        value={formData.numero}
+                        onChange={handleChange}
+                        disabled={loading}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row two-cols">
+                    <div className="form-group">
+                      <label htmlFor="logradouro">Logradouro:</label>
+                      <input
+                        type="text"
+                        id="logradouro"
+                        name="logradouro"
+                        value={formData.logradouro}
+                        onChange={handleChange}
+                        disabled={loading}
+                        readOnly={cepPreenchido && formData.logradouro !== ''}
+                        className={cepPreenchido && formData.logradouro !== '' ? 'field-autofilled' : ''}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="complemento">Complemento:</label>
+                      <input
+                        type="text"
+                        id="complemento"
+                        name="complemento"
+                        value={formData.complemento}
+                        onChange={handleChange}
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="bairro">Bairro:</label>
+                    <input
+                      type="text"
+                      id="bairro"
+                      name="bairro"
+                      value={formData.bairro}
+                      onChange={handleChange}
+                      disabled={loading}
+                      readOnly={cepPreenchido && formData.bairro !== ''}
+                      className={cepPreenchido && formData.bairro !== '' ? 'field-autofilled' : ''}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-row col-auto-small">
+                    <div className="form-group">
+                      <label htmlFor="cidade">Cidade:</label>
+                      <input
+                        type="text"
+                        id="cidade"
+                        name="cidade"
+                        value={formData.cidade}
+                        onChange={handleChange}
+                        disabled={loading}
+                        readOnly={cepPreenchido && formData.cidade !== ''}
+                        className={cepPreenchido && formData.cidade !== '' ? 'field-autofilled' : ''}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group field-small">
+                      <label htmlFor="estado">UF:</label>
+                      <input
+                        type="text"
+                        id="estado"
+                        name="estado"
+                        value={formData.estado}
+                        onChange={handleChange}
+                        maxLength="2"
+                        placeholder="SP"
+                        disabled={loading}
+                        readOnly={cepPreenchido && formData.estado !== ''}
+                        className={cepPreenchido && formData.estado !== '' ? 'field-autofilled' : ''}
+                        required
+                      />
+                      {errors.estado && <span className="error-message">{errors.estado}</span>}
+                    </div>
+                  </div>
+                </section>
               </div>
               
               {message.text && (
