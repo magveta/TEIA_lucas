@@ -135,29 +135,29 @@ export const ContainerForm = () => {
       if (response.success && response.data.success) {
         // Salvar dados do usuário usando o AuthContext
         login(response.data.data);
-        
+
         // Mostrar mensagem de sucesso
         setMessage({ text: response.data.message, type: 'success' });
-        
+
         // Limpar formulário
         setEmail('');
         setSenha('');
-        
+
         // Redirecionar para dashboard após 1 segundo
         setTimeout(() => {
           navigate('/dashboard');
         }, 1000);
       } else {
         // Tratar erro retornado pelo backend
-        setMessage({ 
-          text: response.data?.message || 'Email ou senha incorretos', 
-          type: 'error' 
+        setMessage({
+          text: response.data?.message || 'Email ou senha incorretos',
+          type: 'error'
         });
       }
     } catch (error) {
-      setMessage({ 
-        text: error.message || 'Erro de conexão. Verifique se o servidor está rodando.', 
-        type: 'error' 
+      setMessage({
+        text: error.message || 'Erro de conexão. Verifique se o servidor está rodando.',
+        type: 'error'
       });
     } finally {
       setLoading(false);
@@ -218,220 +218,220 @@ export const ContainerForm = () => {
       <div className="login-container">
         <div className={`login-form-section ${mode === 'cadastro' ? 'cadastro-form-section' : ''}`}>
           <div className="login-form-container">
-            <h2>{mode === 'login' ? 'Faça seu Login' : 'Cadastre-se'}</h2>
+            <h2>{mode === 'login' ? 'Login' : 'Cadastre-se'}</h2>
             {mode === 'login' ? (
-            <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="senha">Senha:</label>
-                <input 
-                  type="password" 
-                  id="senha" 
-                  name="senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-              
-              {message.text && (
-                <div className={`form-message ${message.type}`}>
-                  {message.text}
+              <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="email">Email:</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
                 </div>
-              )}
-              
-              <button 
-                type="submit" 
-                className="login-button" 
-                disabled={loading}
-              >
-                {loading ? 'Entrando...' : 'Logar'}
-              </button>
-            </form>
+
+                <div className="form-group">
+                  <label htmlFor="senha">Senha:</label>
+                  <input
+                    type="password"
+                    id="senha"
+                    name="senha"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+
+                {message.text && (
+                  <div className={`form-message ${message.type}`}>
+                    {message.text}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading}
+                >
+                  {loading ? 'Entrando...' : 'Logar'}
+                </button>
+              </form>
             ) : (
-            <form className="login-form" onSubmit={handleCadastroSubmit}>
-              <div className="form-group">
-                <label htmlFor="nome">Nome Completo:</label>
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  value={cadastroData.nome}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cpf-cadastro">CPF:</label>
-                <input
-                  type="text"
-                  id="cpf-cadastro"
-                  name="cpf"
-                  value={cadastroData.cpf}
-                  onChange={handleCadastroChange}
-                  maxLength="11"
-                  placeholder="Apenas números"
-                  disabled={loading}
-                  required
-                />
-                {cadastroErrors.cpf && <span className="error-message">{cadastroErrors.cpf}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="email-cadastro">Email:</label>
-                <input
-                  type="email"
-                  id="email-cadastro"
-                  name="email"
-                  value={cadastroData.email}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-                {cadastroErrors.email && <span className="error-message">{cadastroErrors.email}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="senha-cadastro">Senha:</label>
-                <input
-                  type="password"
-                  id="senha-cadastro"
-                  name="senha"
-                  value={cadastroData.senha}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-                {cadastroErrors.senha && <span className="error-message">{cadastroErrors.senha}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cep-cadastro">CEP:</label>
-                <input
-                  type="text"
-                  id="cep-cadastro"
-                  name="cep"
-                  value={cadastroData.cep}
-                  onChange={handleCadastroChange}
-                  maxLength="8"
-                  placeholder="Apenas números"
-                  disabled={loading}
-                  required
-                />
-                {cadastroErrors.cep && <span className="error-message">{cadastroErrors.cep}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="logradouro-cadastro">Logradouro:</label>
-                <input
-                  type="text"
-                  id="logradouro-cadastro"
-                  name="logradouro"
-                  value={cadastroData.logradouro}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="numero-cadastro">Número:</label>
-                <input
-                  type="text"
-                  id="numero-cadastro"
-                  name="numero"
-                  value={cadastroData.numero}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="complemento-cadastro">Complemento:</label>
-                <input
-                  type="text"
-                  id="complemento-cadastro"
-                  name="complemento"
-                  value={cadastroData.complemento}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="bairro-cadastro">Bairro:</label>
-                <input
-                  type="text"
-                  id="bairro-cadastro"
-                  name="bairro"
-                  value={cadastroData.bairro}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cidade-cadastro">Cidade:</label>
-                <input
-                  type="text"
-                  id="cidade-cadastro"
-                  name="cidade"
-                  value={cadastroData.cidade}
-                  onChange={handleCadastroChange}
-                  disabled={loading}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="estado-cadastro">Estado (UF):</label>
-                <input
-                  type="text"
-                  id="estado-cadastro"
-                  name="estado"
-                  value={cadastroData.estado}
-                  onChange={handleCadastroChange}
-                  maxLength="2"
-                  placeholder="Ex.: SP"
-                  disabled={loading}
-                  required
-                />
-                {cadastroErrors.estado && <span className="error-message">{cadastroErrors.estado}</span>}
-              </div>
-
-              {message.text && (
-                <div className={`form-message ${message.type}`}>
-                  {message.text}
+              <form className="login-form" onSubmit={handleCadastroSubmit}>
+                <div className="form-group">
+                  <label htmlFor="nome">Nome Completo:</label>
+                  <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    value={cadastroData.nome}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
                 </div>
-              )}
 
-              <button
-                type="submit"
-                className="login-button"
-                disabled={!isCadastroValid() || loading}
-              >
-                {loading ? 'Cadastrando...' : 'Criar Conta'}
-              </button>
-            </form>
+                <div className="form-group">
+                  <label htmlFor="cpf-cadastro">CPF:</label>
+                  <input
+                    type="text"
+                    id="cpf-cadastro"
+                    name="cpf"
+                    value={cadastroData.cpf}
+                    onChange={handleCadastroChange}
+                    maxLength="11"
+                    placeholder="Apenas números"
+                    disabled={loading}
+                    required
+                  />
+                  {cadastroErrors.cpf && <span className="error-message">{cadastroErrors.cpf}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email-cadastro">Email:</label>
+                  <input
+                    type="email"
+                    id="email-cadastro"
+                    name="email"
+                    value={cadastroData.email}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                  {cadastroErrors.email && <span className="error-message">{cadastroErrors.email}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="senha-cadastro">Senha:</label>
+                  <input
+                    type="password"
+                    id="senha-cadastro"
+                    name="senha"
+                    value={cadastroData.senha}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                  {cadastroErrors.senha && <span className="error-message">{cadastroErrors.senha}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="cep-cadastro">CEP:</label>
+                  <input
+                    type="text"
+                    id="cep-cadastro"
+                    name="cep"
+                    value={cadastroData.cep}
+                    onChange={handleCadastroChange}
+                    maxLength="8"
+                    placeholder="Apenas números"
+                    disabled={loading}
+                    required
+                  />
+                  {cadastroErrors.cep && <span className="error-message">{cadastroErrors.cep}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="logradouro-cadastro">Logradouro:</label>
+                  <input
+                    type="text"
+                    id="logradouro-cadastro"
+                    name="logradouro"
+                    value={cadastroData.logradouro}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="numero-cadastro">Número:</label>
+                  <input
+                    type="text"
+                    id="numero-cadastro"
+                    name="numero"
+                    value={cadastroData.numero}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="complemento-cadastro">Complemento:</label>
+                  <input
+                    type="text"
+                    id="complemento-cadastro"
+                    name="complemento"
+                    value={cadastroData.complemento}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="bairro-cadastro">Bairro:</label>
+                  <input
+                    type="text"
+                    id="bairro-cadastro"
+                    name="bairro"
+                    value={cadastroData.bairro}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="cidade-cadastro">Cidade:</label>
+                  <input
+                    type="text"
+                    id="cidade-cadastro"
+                    name="cidade"
+                    value={cadastroData.cidade}
+                    onChange={handleCadastroChange}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="estado-cadastro">Estado (UF):</label>
+                  <input
+                    type="text"
+                    id="estado-cadastro"
+                    name="estado"
+                    value={cadastroData.estado}
+                    onChange={handleCadastroChange}
+                    maxLength="2"
+                    placeholder="Ex.: SP"
+                    disabled={loading}
+                    required
+                  />
+                  {cadastroErrors.estado && <span className="error-message">{cadastroErrors.estado}</span>}
+                </div>
+
+                {message.text && (
+                  <div className={`form-message ${message.type}`}>
+                    {message.text}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={!isCadastroValid() || loading}
+                >
+                  {loading ? 'Cadastrando...' : 'Criar Conta'}
+                </button>
+              </form>
             )}
-            
+
             <div className="signup-link">
               <p>Preferir fluxo completo? <Link to="/cadastro">Abra a tela de cadastro</Link></p>
             </div>

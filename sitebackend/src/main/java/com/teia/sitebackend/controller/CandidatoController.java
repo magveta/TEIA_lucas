@@ -3,19 +3,27 @@ package com.teia.sitebackend.controller;
 import com.teia.sitebackend.dto.ApiResponse;
 import com.teia.sitebackend.dto.CandidatoCadastroRequest;
 import com.teia.sitebackend.dto.CandidatoDTO;
+import com.teia.sitebackend.dto.CurriculoAnaliseResponse;
 import com.teia.sitebackend.dto.LoginRequest;
-import com.teia.sitebackend.factory.ResponseFactory;
 import com.teia.sitebackend.exception.ResourceNotFoundException;
 import com.teia.sitebackend.exception.ValidationException;
+import com.teia.sitebackend.factory.ResponseFactory;
 import com.teia.sitebackend.mapper.CandidatoMapper;
 import com.teia.sitebackend.model.Candidato;
+import com.teia.sitebackend.service.CurriculoAnaliseService;
 import com.teia.sitebackend.service.ICandidatoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,59 +35,44 @@ public class CandidatoController {
 
     private final ICandidatoService candidatoService;
     private final CandidatoMapper candidatoMapper;
+    private final CurriculoAnaliseService curriculoAnaliseService;
 
-    public CandidatoController(ICandidatoService candidatoService, CandidatoMapper candidatoMapper) {
+    public CandidatoController(
+        ICandidatoService candidatoService,
+        CandidatoMapper candidatoMapper,
+        CurriculoAnaliseService curriculoAnaliseService
+    ) {
         this.candidatoService = candidatoService;
         this.candidatoMapper = candidatoMapper;
+        this.curriculoAnaliseService = curriculoAnaliseService;
     }
 
-    /**
-     * Lista todos os candidatos (sem expor senhas)
-     */
     @GetMapping
-    public ResponseEntity<ApiResponse> getAll(){
+    public ResponseEntity<ApiResponse> getAll() {
         List<Candidato> candidatos = candidatoService.getAll();
         List<CandidatoDTO> candidatosDTO = candidatoMapper.toDTOList(candidatos);
         return ResponseFactory.success("Candidatos listados com sucesso", candidatosDTO);
     }
 
-    /**
-     * Cadastra um novo candidato
-     */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody CandidatoCadastroRequest request){
-        // Converte DTO para Entity
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody CandidatoCadastroRequest request) {
         Candidato candidato = candidatoMapper.toEntity(request);
-        
-        // Salva (validações são feitas no service)
         Candidato savedCandidato = candidatoService.save(candidato);
-        
-        // Converte para DTO (sem senha)
         CandidatoDTO candidatoDTO = candidatoMapper.toDTO(savedCandidato);
-        
         return ResponseFactory.created("Cadastro realizado com sucesso!", candidatoDTO);
     }
-    
-    /**
-     * Realiza login do candidato
-     */
+
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest loginRequest){
-        // Valida login (lança UnauthorizedException se inválido)
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         Optional<Candidato> candidato = candidatoService.validarLogin(
-            loginRequest.getEmail(), 
+            loginRequest.getEmail(),
             loginRequest.getSenha()
         );
-        
-        // Converte para DTO (sem senha)
+
         CandidatoDTO candidatoDTO = candidatoMapper.toDTO(candidato.get());
-        
         return ResponseFactory.success("Login realizado com sucesso!", candidatoDTO);
     }
 
-    /**
-     * Upload de currículo do candidato
-     */
     @PostMapping(value = "/{candidatoId}/curriculo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> uploadCurriculo(
         @PathVariable String candidatoId,
@@ -95,10 +88,8 @@ public class CandidatoController {
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || (!contentType.equals("application/pdf")
-            && !contentType.equals("application/msword")
-            && !contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))) {
-            throw new ValidationException("Formato inválido. Envie arquivo PDF, DOC ou DOCX");
+        if (contentType == null || !contentType.equals(MediaType.APPLICATION_PDF_VALUE)) {
+            throw new ValidationException("Formato inválido. Envie apenas arquivo PDF");
         }
 
         Candidato candidatoAtualizado = candidatoService.atualizarCurriculo(
@@ -112,9 +103,12 @@ public class CandidatoController {
         return ResponseFactory.success("Currículo enviado com sucesso", candidatoDTO);
     }
 
-    /**
-     * Download do currículo do candidato
-     */
+    @PostMapping("/{candidatoId}/curriculo/analise")
+    public ResponseEntity<ApiResponse> analisarCurriculo(@PathVariable String candidatoId) {
+        CurriculoAnaliseResponse analise = curriculoAnaliseService.analisarCurriculo(candidatoId);
+        return ResponseFactory.success("Análise de currículo gerada com sucesso", analise);
+    }
+
     @GetMapping("/{candidatoId}/curriculo")
     public ResponseEntity<byte[]> baixarCurriculo(@PathVariable String candidatoId) {
         Candidato candidato = candidatoService.getById(candidatoId)
