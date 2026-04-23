@@ -26,6 +26,7 @@ A Teia visa facilitar a entrada de estudantes de tecnologia a se prepararem para
 <img width="12" />
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="40" alt="javascript logo"  />
 </div>
+
 ## Objetivos de Desenvolvimento Sustentável (ODS)
  
 O projeto visa contribuir para os seguintes ODS:
