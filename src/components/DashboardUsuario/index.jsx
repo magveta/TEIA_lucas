@@ -136,6 +136,14 @@ export const DashboardUsuario = () => {
     }
   };
 
+  const handleViewRecommendedCourse = () => {
+    if (!analysisData) {
+      return;
+    }
+
+    navigate('/cursos-recomendados', { state: { analysisData } });
+  };
+
   const carregarPreviewCurriculo = async (candidatoId) => {
     if (!candidatoId) {
       return;
@@ -433,6 +441,13 @@ export const DashboardUsuario = () => {
                   <section className="analysis-final-panel">
                     <span className="analysis-kicker">Orientacao final</span>
                     <p>{analysisData.mensagemFinal}</p>
+                    <button
+                      type="button"
+                      onClick={handleViewRecommendedCourse}
+                      className="curriculo-btn curriculo-btn-primary analysis-course-button"
+                    >
+                      Ver curso recomendado
+                    </button>
                   </section>
                 </div>
               ) : (

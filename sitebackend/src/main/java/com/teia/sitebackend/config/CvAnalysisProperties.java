@@ -16,8 +16,10 @@ public class CvAnalysisProperties {
     private String baseUrl = "https://api.openai.com/v1";
     private String apiKey = "";
     private String model = "gpt-5-nano";
-    private int timeoutMs = 15000;
+    private int timeoutMs = 60000;
     private int maxChars = 12000;
+    private int maxCompletionTokens = 2000;
+    private String reasoningEffort = "minimal";
 
     public boolean isEnabled() {
         return enabled;
@@ -67,6 +69,22 @@ public class CvAnalysisProperties {
         this.maxChars = maxChars;
     }
 
+    public int getMaxCompletionTokens() {
+        return maxCompletionTokens;
+    }
+
+    public void setMaxCompletionTokens(int maxCompletionTokens) {
+        this.maxCompletionTokens = maxCompletionTokens;
+    }
+
+    public String getReasoningEffort() {
+        return reasoningEffort;
+    }
+
+    public void setReasoningEffort(String reasoningEffort) {
+        this.reasoningEffort = reasoningEffort;
+    }
+
     @PostConstruct
     void logStartupStatus() {
         if (!enabled) {
@@ -85,11 +103,13 @@ public class CvAnalysisProperties {
         }
 
         LOGGER.info(
-            "CV analysis integration is enabled. baseUrl={}, model={}, timeoutMs={}, maxChars={}",
+            "CV analysis integration is enabled. baseUrl={}, model={}, timeoutMs={}, maxChars={}, maxCompletionTokens={}, reasoningEffort={}",
             baseUrl,
             model,
             timeoutMs,
-            maxChars
+            maxChars,
+            maxCompletionTokens,
+            reasoningEffort
         );
     }
 

@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -58,22 +59,52 @@ public class OpenAiCompatibleCvAnalysisClient implements CvAnalysisClient {
                 new ChatMessage("user", "Analise este currículo e sugira melhorias simples:\n\n" + textoCurriculo)
             ),
             1,
-            new ResponseFormat("json_object")
+            new ResponseFormat("json_object"),
+            properties.getMaxCompletionTokens(),
+            properties.getReasoningEffort()
         );
 
         try {
-            ChatCompletionResponse response = restClient.post()
+            byte[] responseBody = restClient.post()
                 .uri("/chat/completions")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getApiKey())
                 .body(request)
-                .retrieve()
-                .body(ChatCompletionResponse.class);
+                .exchange((httpRequest, httpResponse) -> {
+                    byte[] body = httpResponse.getBody().readAllBytes();
+
+                    if (httpResponse.getStatusCode().isError()) {
+                        LOGGER.error(
+                            "OpenAI CV analysis request failed. status={}, statusText={}, responseBodySnippet={}",
+                            httpResponse.getStatusCode().value(),
+                            httpResponse.getStatusText(),
+                            limitarTexto(toUtf8String(body))
+                        );
+                        throw new ExternalServiceException(ANALISE_INDISPONIVEL);
+                    }
+
+                    return body;
+                });
+
+            String responseText = toUtf8String(responseBody);
+            ChatCompletionResponse response = objectMapper.readValue(responseText, ChatCompletionResponse.class);
 
             if (response == null || response.choices() == null || response.choices().isEmpty()
                 || response.choices().get(0).message() == null
                 || response.choices().get(0).message().content() == null
                 || response.choices().get(0).message().content().isBlank()) {
+                LOGGER.warn(
+                    "OpenAI CV analysis returned empty content. finishReason={}, refusal={}, responseBodySnippet={}",
+                    response != null && response.choices() != null && !response.choices().isEmpty()
+                        ? response.choices().get(0).finish_reason()
+                        : "<missing>",
+                    response != null && response.choices() != null && !response.choices().isEmpty()
+                        && response.choices().get(0).message() != null
+                        ? response.choices().get(0).message().refusal()
+                        : "<missing>",
+                    limitarTexto(responseText)
+                );
                 throw new ExternalServiceException("A IA retornou uma resposta vazia para a análise do currículo");
             }
 
@@ -159,11 +190,17 @@ public class OpenAiCompatibleCvAnalysisClient implements CvAnalysisClient {
         return texto.substring(0, 300) + "...";
     }
 
+    private String toUtf8String(byte[] body) {
+        return new String(body == null ? new byte[0] : body, StandardCharsets.UTF_8);
+    }
+
     private record ChatCompletionRequest(
         String model,
         List<ChatMessage> messages,
         double temperature,
-        ResponseFormat response_format
+        ResponseFormat response_format,
+        int max_completion_tokens,
+        String reasoning_effort
     ) {
     }
 
@@ -176,9 +213,9 @@ public class OpenAiCompatibleCvAnalysisClient implements CvAnalysisClient {
     private record ChatCompletionResponse(List<Choice> choices) {
     }
 
-    private record Choice(ChatMessageResponse message) {
+    private record Choice(ChatMessageResponse message, String finish_reason) {
     }
 
-    private record ChatMessageResponse(String content) {
+    private record ChatMessageResponse(String content, String refusal) {
     }
 }

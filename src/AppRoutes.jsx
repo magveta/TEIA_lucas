@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { LoginPage } from './pages/Login'
 import { CadastroPage } from './pages/Cadastro'
 import { DashboardPage } from './pages/Dashboard'
+import { CursosRecomendadosPage } from './pages/CursosRecomendados'
 import { SobrePage } from './pages/Sobre'
 import { ContatoPage } from './pages/Contato'
 import './App.css'
@@ -61,6 +62,15 @@ function AppRoutes() {
           />
           
           {/* Rotas públicas - Login e Cadastro */}
+          <Route
+            path="/cursos-recomendados"
+            element={
+              <ProtectedRoute>
+                <CursosRecomendadosPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route 
             path="/login" 
             element={

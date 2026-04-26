@@ -84,4 +84,29 @@ class OpenAiCompatibleCvAnalysisClientTest {
 
         assertThrows(ExternalServiceException.class, () -> client.analisarCurriculo("Texto do curriculo"));
     }
+
+    @Test
+    void deveMapearRespostaMesmoQuandoContentTypeForOctetStream() {
+        server.expect(requestTo("https://example.test/v1/chat/completions"))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(header("Authorization", "Bearer test-key"))
+            .andRespond(withSuccess("""
+                {
+                  "choices": [
+                    {
+                      "message": {
+                        "content": "{\\"resumo\\":\\"Curriculo objetivo.\\",\\"pontosFortes\\":[\\"Boa organizacao\\"],\\"pontosMelhoria\\":[\\"Melhorar escrita\\"],\\"mensagemFinal\\":\\"Revise os detalhes finais.\\"}"
+                      }
+                    }
+                  ]
+                }
+                """, MediaType.APPLICATION_OCTET_STREAM));
+
+        CurriculoAnaliseInsights response = client.analisarCurriculo("Texto do curriculo");
+
+        assertEquals("Curriculo objetivo.", response.getResumo());
+        assertEquals("Boa organizacao", response.getPontosFortes().get(0));
+        assertEquals("Melhorar escrita", response.getPontosMelhoria().get(0));
+        assertEquals("Revise os detalhes finais.", response.getMensagemFinal());
+    }
 }
