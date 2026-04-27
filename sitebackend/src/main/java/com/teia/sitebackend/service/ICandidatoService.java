@@ -35,6 +35,8 @@ public interface ICandidatoService {
      * Atualiza o currículo do candidato
      */
     Candidato atualizarCurriculo(String candidatoId, String nomeArquivo, String contentType, byte[] arquivo);
+
+    Candidato removerCurriculo(String candidatoId);
     
     /**
      * Busca candidato por email

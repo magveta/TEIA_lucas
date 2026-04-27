@@ -14,6 +14,7 @@ export const DashboardUsuario = () => {
   const [analysisMessage, setAnalysisMessage] = useState(EMPTY_MESSAGE);
   const [analysisData, setAnalysisData] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [removingCurriculo, setRemovingCurriculo] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const [loadingPreview, setLoadingPreview] = useState(false);
 
@@ -133,6 +134,49 @@ export const DashboardUsuario = () => {
       });
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleRemoveCurriculo = async () => {
+    if (!user?.candidato_id || !hasUploadedCurriculo) {
+      setUploadMessage({ text: 'Nenhum curriculo enviado para remover.', type: 'error' });
+      return;
+    }
+
+    if (!window.confirm('Tem certeza que deseja remover o curriculo enviado?')) {
+      return;
+    }
+
+    setRemovingCurriculo(true);
+    setUploadMessage(EMPTY_MESSAGE);
+
+    try {
+      const response = await candidatoAPI.removerCurriculo(user.candidato_id);
+
+      if (response.success && response.data?.success) {
+        if (response.data?.data) {
+          login(response.data.data);
+        }
+
+        clearAnalysisState();
+        setCurriculoFile(null);
+        setUploadMessage({ text: response.data?.message || 'Curriculo removido com sucesso.', type: 'success' });
+        setPreviewUrl((currentUrl) => {
+          if (currentUrl) {
+            URL.revokeObjectURL(currentUrl);
+          }
+          return '';
+        });
+      } else {
+        setUploadMessage({
+          text: response.data?.message || 'Nao foi possivel remover o curriculo.',
+          type: 'error',
+        });
+      }
+    } catch (error) {
+      setUploadMessage({ text: error.message || 'Erro ao remover curriculo.', type: 'error' });
+    } finally {
+      setRemovingCurriculo(false);
     }
   };
 
@@ -342,6 +386,22 @@ export const DashboardUsuario = () => {
                           </>
                         ) : (
                           'Analisar curriculo'
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleRemoveCurriculo}
+                        disabled={removingCurriculo || uploading || analyzing || !hasUploadedCurriculo}
+                        className="curriculo-btn curriculo-btn-danger"
+                      >
+                        {removingCurriculo ? (
+                          <>
+                            <span className="btn-spinner"></span>
+                            Removendo...
+                          </>
+                        ) : (
+                          'Remover curriculo'
                         )}
                       </button>
                     </div>

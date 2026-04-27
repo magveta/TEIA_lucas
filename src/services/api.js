@@ -83,6 +83,12 @@ export const candidatoAPI = {
     });
   },
 
+  removerCurriculo: async (candidatoId) => {
+    return await fetchAPI(`/candidato/${candidatoId}/curriculo`, {
+      method: 'DELETE',
+    });
+  },
+
   baixarCurriculoBlob: async (candidatoId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/candidato/${candidatoId}/curriculo`, {

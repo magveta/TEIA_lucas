@@ -62,6 +62,18 @@ public class CandidatoService implements ICandidatoService {
 
         return candidatoRepository.save(candidato);
     }
+
+    @Override
+    public Candidato removerCurriculo(String candidatoId) {
+        Candidato candidato = candidatoRepository.findById(candidatoId)
+            .orElseThrow(() -> new ResourceNotFoundException("Candidato não encontrado"));
+
+        candidato.setCurriculoNomeArquivo(null);
+        candidato.setCurriculoContentType(null);
+        candidato.setCurriculoArquivo(null);
+
+        return candidatoRepository.save(candidato);
+    }
     
     @Override
     public Optional<Candidato> findByEmail(String email){

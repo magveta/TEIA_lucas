@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -110,5 +111,24 @@ class CandidatoControllerTest {
             .andExpect(jsonPath("$.message").value("Análise de currículo gerada com sucesso"))
             .andExpect(jsonPath("$.data.nomeArquivo").value("curriculo.pdf"))
             .andExpect(jsonPath("$.data.pontosMelhoria[0]").value("Adicionar metricas"));
+    }
+
+    @Test
+    void deveRemoverCurriculo() throws Exception {
+        Candidato candidato = new Candidato();
+        candidato.setCandidato_id("123");
+
+        CandidatoDTO candidatoDTO = new CandidatoDTO();
+        candidatoDTO.setCandidato_id("123");
+        candidatoDTO.setPossuiCurriculo(false);
+
+        Mockito.when(candidatoService.removerCurriculo("123")).thenReturn(candidato);
+        Mockito.when(candidatoMapper.toDTO(candidato)).thenReturn(candidatoDTO);
+
+        mockMvc.perform(delete("/candidato/{candidatoId}/curriculo", "123"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message").value("Currículo removido com sucesso"))
+            .andExpect(jsonPath("$.data.possuiCurriculo").value(false));
     }
 }

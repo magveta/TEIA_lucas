@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -107,6 +108,13 @@ public class CandidatoController {
     public ResponseEntity<ApiResponse> analisarCurriculo(@PathVariable String candidatoId) {
         CurriculoAnaliseResponse analise = curriculoAnaliseService.analisarCurriculo(candidatoId);
         return ResponseFactory.success("Análise de currículo gerada com sucesso", analise);
+    }
+
+    @DeleteMapping("/{candidatoId}/curriculo")
+    public ResponseEntity<ApiResponse> removerCurriculo(@PathVariable String candidatoId) {
+        Candidato candidatoAtualizado = candidatoService.removerCurriculo(candidatoId);
+        CandidatoDTO candidatoDTO = candidatoMapper.toDTO(candidatoAtualizado);
+        return ResponseFactory.success("Currículo removido com sucesso", candidatoDTO);
     }
 
     @GetMapping("/{candidatoId}/curriculo")
