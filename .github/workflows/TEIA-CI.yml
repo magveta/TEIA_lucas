@@ -1,0 +1,46 @@
+name: CI - PROJETO TEIA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+      
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # =========================
+      # BACKEND (Spring Boot)
+      # =========================
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Maven
+        run: sudo apt-get install maven -y 
+
+      - name: Build backend
+        run: |
+          cd sitebackend
+          mvn clean test
+
+      # =========================
+      # FRONTEND (React + Vite)
+      # =========================
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
